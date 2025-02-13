@@ -319,9 +319,9 @@ const ChartComponent = () => {
    const date =  parseDate("2010-10-7");
     console.log(date);
  
-    const newData = data.map((item, i) =>{
+    const newData = data?.map((item, i) =>{
       return {
-        date:parseDate(item.date.split("T")[0]),
+        date:parseDate(item?.date?.split("T")[0]),
         open: item.open,
         high: item.high,
         low: item.low,
@@ -338,35 +338,35 @@ const ChartComponent = () => {
   // }
 
   return (
-    <div>
-      <div
-        style={{
-            padding: "10px",
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)", // 4 columns
-          gridTemplateRows: "repeat(2, auto)", // 2 rows, auto height
-          gap: "10px", // Space between grid items
-          marginBottom: "10px",
-        }}
-      >
-        {indicators.map(({ id, name }) => (
-          <div className="" key={id}>
-            <input
-              id={id}
-              type="checkbox"
-              checked={selectedIndicators.includes(id)}
-              onChange={() =>
-                handleCheckboxChange(id, selectedIndicators.includes(id))
-              }
-            />
-            <label htmlFor={id} className="text-black text-sm">
-              {id.toUpperCase()}
-            </label>
-          </div>
-        ))}
-      </div>
-      <TypeChooser>{(type) => <Chart type={type} data={chartData} selectedIndicators={selectedIndicators} />}</TypeChooser>
-    </div>
+   data.length > 0 ? <div> <div>
+   <div
+     style={{
+         padding: "10px",
+       display: "grid",
+       gridTemplateColumns: "repeat(4, 1fr)", // 4 columns
+       gridTemplateRows: "repeat(2, auto)", // 2 rows, auto height
+       gap: "10px", // Space between grid items
+       marginBottom: "10px",
+     }}
+   >
+     {indicators.map(({ id, name }) => (
+       <div className="" key={id}>
+         <input
+           id={id}
+           type="checkbox"
+           checked={selectedIndicators.includes(id)}
+           onChange={() =>
+             handleCheckboxChange(id, selectedIndicators.includes(id))
+           }
+         />
+         <label htmlFor={id} className="text-black text-sm">
+           {id.toUpperCase()}
+         </label>
+       </div>
+     ))}
+   </div>
+   <TypeChooser>{(type) => <Chart type={type} data={chartData} selectedIndicators={selectedIndicators} />}</TypeChooser>
+ </div></div> : "no data"
   );
 };
 
