@@ -1,7 +1,8 @@
 {
   "name": "my-react-charting-npm-package",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "dependencies": {
+    "@craco/craco": "^7.1.0",
     "cra-template": "1.2.0",
     "d3-dsv": "^3.0.1",
     "d3-format": "^3.1.0",
@@ -11,9 +12,8 @@
     "react-stockcharts": "^0.7.8"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,5 +37,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/yogendra09/charting-package.git"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.26.3"
   }
 }
