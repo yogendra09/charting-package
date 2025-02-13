@@ -20,10 +20,7 @@ const parseDate = timeParse("%Y-%m-%d");
 
 export const getData = async () => {
     const response = await fetch("https://cdn.rawgit.com/rrag/react-stockcharts/master/docs/data/MSFT.tsv");
-    // console.log(await response.text());
     const data = tsvParse(await response.text(), parseData(parseDate));
-    console.log(JSON.parse(await response.text()));
-    
     return data; // Return the array directly
 };
 

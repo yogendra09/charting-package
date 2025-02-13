@@ -4,7 +4,7 @@ import { format } from "d3-format";
 import { timeFormat } from "d3-time-format";
 import { ChartCanvas, Chart } from "react-stockcharts";
 import { RSITooltip } from "react-stockcharts/lib/tooltip";
-import { bollingerBand, rsi, sma } from "react-stockcharts/lib/indicator";
+import { atr, bollingerBand, macd, rsi, sma } from "react-stockcharts/lib/indicator";
 
 import {
   BarSeries,
@@ -31,7 +31,6 @@ import {
 import { ema, stochasticOscillator } from "react-stockcharts/lib/indicator";
 import { fitWidth } from "react-stockcharts/lib/helper";
 import { last } from "react-stockcharts/lib/utils";
-import { atr } from "react-stockcharts/lib/indicator";
 
 const stoAppearance = {
   stroke: Object.assign({}, StochasticSeries.defaultProps.stroke),
@@ -76,8 +75,10 @@ const CandleStickChartWithFullStochasticsIndicator = ({
 
   const sma20 = sma()
     .options({ windowSize: 20 })
-    .merge((d, c) => { d.sma20 = c; })
-    .accessor(d => d.sma20);
+    .merge((d, c) => {
+      d.sma20 = c;
+    })
+    .accessor((d) => d.sma20);
 
   const slowSTO = stochasticOscillator()
     .options({ windowSize: 14, kWindowSize: 3 })
@@ -112,6 +113,24 @@ const CandleStickChartWithFullStochasticsIndicator = ({
       d.bb = c;
     })
     .accessor((d) => d.bb);
+    
+
+  const macdCalculator = macd()
+			.options({
+				fast: 12,
+				slow: 26,
+				signal: 9,
+			})
+			.merge((d, c) => {d.macd = c;})
+			.accessor(d => d.macd);
+
+   
+  const atrCalculator = atr()
+   .merge((d, c) => {
+      d.atr = c;
+    })
+    .accessor((d) => d.atr);  
+
 
   const bbAppearance = {
     stroke: {
@@ -121,22 +140,17 @@ const CandleStickChartWithFullStochasticsIndicator = ({
     },
     fill: "#4682B4",
   };
-  const atrCalculator = atr()
-  .options({ windowSize: 14 })  // Corrected windowSize configuration
-  .merge((d, c) => {
-    d.atr = c;
-  })
-  .accessor((d) => d.atr);  // accessor function for ATR data
 
-
-  const calculatedData = sma20(bb(ema20(ema50(slowSTO(fastSTO(fullSTO(initialData)))))));
+  const calculatedData = macdCalculator(atrCalculator(rsiCalculator(sma20(
+    bb(ema20(ema50(slowSTO(fastSTO(fullSTO(initialData)))))))
+  )))
   const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
     (d) => d.date
   );
 
   const { data, xScale, xAccessor, displayXAccessor } =
     xScaleProvider(calculatedData);
-   
+
   const start = xAccessor(last(data));
   const end = xAccessor(data[Math.max(0, data.length - 150)]);
   const xExtents = [start, end];
@@ -148,7 +162,7 @@ const CandleStickChartWithFullStochasticsIndicator = ({
   const belowChart = [
     {
       id: "atr",
-      indicator: "slow sto",
+      indicator: "ATR",
       component: (
         <Chart
           id={3}
@@ -169,11 +183,11 @@ const CandleStickChartWithFullStochasticsIndicator = ({
             orient="right"
             displayFormat={format(".2f")}
           />
-          <StochasticSeries yAccessor={(d) => d.fastSTO} {...stoAppearance} />
+          <LineSeries yAccessor={(d) => d.atr || null} stroke="blue" />
           <StochasticTooltip
             origin={[-38, 15]}
-            yAccessor={(d) => d.slowSTO}
-            options={slowSTO.options()}
+            yAccessor={(d) => d.atrCalculator}
+            options={atrCalculator.options()}
             appearance={stoAppearance}
             label="Slow STO"
           />
@@ -182,7 +196,7 @@ const CandleStickChartWithFullStochasticsIndicator = ({
     },
     {
       id: "macd",
-      indicator: "fast sto",
+      indicator: "MACD",
       component: (
         <Chart
           id={4}
@@ -291,7 +305,6 @@ const CandleStickChartWithFullStochasticsIndicator = ({
       ),
       component: <BollingerSeries yAccessor={(d) => d.bb} {...bbAppearance} />,
     },
-
   ];
 
   return (
