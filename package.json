@@ -1,6 +1,6 @@
 {
   "name": "my-react-charting-npm-package",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "dependencies": {
     "cra-template": "1.2.0",
     "d3-dsv": "^3.0.1",
