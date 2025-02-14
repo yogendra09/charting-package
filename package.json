@@ -1,6 +1,6 @@
 {
   "name": "my-react-charting-npm-package",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "cra-template": "1.2.0",
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "babel src --out-dir dist --copy-files",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
